@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ajax post json</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+
+<header class="p-5 bg-danger">
+    <h1 class="p-3 text-white text-center">Employés</h1>
+</header>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-sm-6 mx-auto">
+            <label for="choix">Choisir un employé</label>
+            <select class="form-select" id="choix">
+                <option selected disabled>Choisir ...</option>
+                <option value="7782">Laura Blanchet</option>
+                <option value="7256">Daniel Chevel</option>
+                <option value="7369">Julien Cottet</option>
+                <option value="7499">Fabrice Grand</option>
+                <option value="7566">Stéphanie Lafaye</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 mt-5 border p-3">
+            <div id="infos">
+                <p>Veuillez chosir un employé dans la liste afin d'obtenir ses informations.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
+
+<script>
+    // l'utilisateur va choisir un employé dans  le champ select, nous lançons un appel ajax vers un fichier php, celui ci la récupérer les données dé l'employé dans un fichier json et va nous renvoyer un tableau html avec les informations.
+
+    // mise en place de lévènement change
+    document.getElementById('choix').addEventListener('change', function() {
+
+        // l'url cible :
+        let url = 'ajax.php';
+
+        let xhttp; //  notre variable pour contenir notre objet ajax
+
+        // instanciation de l'objet ajax
+        if(window.XMLHttpRequest) {
+            xhttp = new XMLHttpRequest(); // Pour tous les navigateurs récents
+        } else {
+            xhttp = new ActiveXObject('Microsoft.XMLHTTP'); // Pour Internet explorer version < 9
+        }
+
+        // console.log(xhttp);
+
+        // on récupère la valeur du champ select
+        // dans un evenement : this représente l'élément html ayant reçu l'évènement.
+        let val = this.value;
+        console.log(val);
+
+        // on prépare les arguments que l'on retrouvera côté PHP dans $_POST
+        let param = 'id_employes=' + val;
+        // let params = 'param1=valeur1&param2=valeur2&...';
+
+        // on ouvre la requete ajax
+        xhttp.open('post', url, true);
+        // en communication post, la ligne suivante est obligatoire et doit toujours se trouver après la ligne .open()
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        xhttp.onreadystatechange = function () {
+            if(xhttp.status == 200 && xhttp.readyState == 4) {
+                console.log(xhttp.responseText);
+                // en l'état responseText contient la réponse sous forme de texte brut, il nous faut le transformer (parse) en véritable objet json
+                let reponse = JSON.parse(xhttp.responseText);
+                console.log(reponse);
+
+                // on place le tableau html dans le div id="infos"
+                document.querySelector('#infos').innerHTML = reponse.resultat;
+            }
+        }
+
+        // on envoie la requete ajax en fournissant les paramètres que l'on retrouvera dans $_POST dans la methode send()
+        xhttp.send(param);
+    });
+</script>
+</body>
+
+</html>

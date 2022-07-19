@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        body { margin: 0; font-family: sans-serif; }
+        header { padding: 90px; background-color: crimson; color: white; }
+        h1 { margin: 0; text-align: center; }
+        .conteneur { max-width: 1000px; margin: 70px auto; border: 1px solid; padding: 20px; }
+        button { display: inline-block; padding: 10px 25px; border: 0; color: white; background-color: royalblue; }
+        h2{color: white; background-color: royalblue; padding: 20px;}
+    </style>
+</head>
+<body>
+<header>
+    <h1>Mon site</h1>
+</header>
+<div class="conteneur">
+    <button id="action">Clicker ici pour changer le contenue</button>
+    <br>
+    <div id="contenu"></div>
+
+</div>
+<script>
+    /*
+               Asynchrone (premier A de AJAX)
+                   - permet d'éxécuter plusieurs scripts en même temps sans que l'exécution d'un script soit bloquante pour les autres script.
+
+               DOC :
+               -----
+               https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest
+
+               Les statuts AJAX (readyState) et HTTP (status) :
+                   - HTTP : https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
+                   exemple :
+                       200 : ok, page trouvée
+                       404 : page non trouvée
+                       500 : erreur serveur
+                       ...
+
+                   AJAX :
+                       - 0 : l'objet est créé, prépration de la requete ajax (open())
+                       - 1 : On envoie la requete (send())
+                       - 2 : requete reçue par le serveur
+                       - 3 : traitement côté serveur
+                       - 4 : la requete est terminée, nous avons reçue la réponse (responseText)
+
+                   On attendra toujours que le statut http soit égal à 200 et le statut ajax soit égal à 4 pour faire nos traitement
+                   - l'évènement onreadystatechange permet de vérifier les changement de statuts
+
+                   La réponse obtenue est l'intégralité du code source de la page cible.
+
+           */
+
+
+
+    // mise en place d'un evenement click sur le bouton id="action"
+    document.getElementById('action').addEventListener('click', function () {
+        //instanciation d'un objet ajax via XMLHttpRequest()
+        let xhttp = new XMLHttpRequest();
+        console.log(xhttp)
+        // mise en place d'un évènement pour vérifier si la communication ajax est terminée afin de donner nos instructions
+        // onreadystatechange => lors d'un changement d'etat
+
+        xhttp.onreadystatechange = function () {
+
+            console.log('Statut HTTP : ' + xhttp.status);
+            console.log('Statut AJAX : ' + xhttp.readyState);
+            // si la communication est finie (vérification de l'état http (page trouvée ou non) et de l'ajax (5 étapes))
+
+            if (xhttp.status == 200 && xhttp.readyState == 4){
+                // la réponse (le code source de la page cible) se trouve dans une propriété de notre objet ajax : responseText
+                console.log(xhttp.responseText);
+                // on place le contenu obtenu dans notre div id="contenu"
+                document.querySelector('#contenu').innerHTML = xhttp.responseText
+            }
+        }
+        // on prepare la communication ajax :
+        xhttp.open('get','contenu.txt', true);// xhttp.open(la_methode, url_cible_de_l'appel, mode_asynchrone (true par défaut));
+
+        // on envoie l'appel ajax
+        xhttp.send();
+    })
+
+</script>
+</body>
+</html>

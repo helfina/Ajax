@@ -1,0 +1,28 @@
+ROLES DES LANGAGES :
+--------------------
+
+FRONTEND :
+- HTML : Structure d'une page web (régions, blocs, contenus, médias ...)
+- CSS  : Mise en forme de la page (couleurs, tailles, marges ...)
+- JS   : Animations, intéractivité (carousel, évènements ...)
+
+BACKEND :
+- PHP  : Fonctionnalités (formulaires (bdd), sécurité, templates)
+- SQL  : Communication  avec les BDD (Création, récupération, modification et suppression de données)
+
+
+AJAX :
+------
+Asynchronous
+Javascript
+And
+Xml | Json
+
+
+
+
+horaire cours :
+9h - 10h30
+10h45 - 12h30
+13h30 - 15h30
+15h45 - 17h
