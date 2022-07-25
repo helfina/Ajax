@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ajax pays</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+
+<header class="p-5 bg-danger">
+    <h1 class="p-3 text-white text-center">Pays</h1>
+</header>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-sm-12 p-3 border">
+            <form method="post" action="">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <select name="pays" id="pays" class="form-select">
+
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <button type="submit" class="btn btn-danger w-100">Valider</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-12 mt-5 p-3 border" id="infos_pays"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<script>
+    // https://restcountries.com/
+
+    $(document).ready(function () {
+
+        /*
+        $.get('https://restcountries.com/v3.1/all', function (data) {
+            console.log(data);
+        }, 'json');
+        */
+
+        $.ajax({
+            type: 'GET',
+            url: 'https://restcountries.com/v3.1/all',
+            success: function (data) {
+                // console.log(data);
+                let tab = [];
+                // .each() permet de tourner sur un tableau
+                $(data).each(function(i, obj) {
+                    // console.log($(this));
+                    // console.log($(this)[0].name.common);
+                    // console.log(obj.name.common);
+
+                    // .push() permet de rajouter dans un tableau array à la suite
+                    tab.push(obj.name.common);
+                });
+                // .sort() permet d'ordonner les valeurs d'une tableau array
+                tab.sort();
+                // console.log(tab);
+
+                let contenuHtml;
+                $(tab).each(function (i, val) {
+                    contenuHtml += '<option>' + val + '</option>';
+                });
+                $('#pays').html(contenuHtml);
+
+            },
+            dataType: 'json'
+        });
+
+
+        // EXERCICE :
+        // mettre en place un evenement sur le form (ne pas oublier de le bloquer), afin de récupérer le choix utilisateur pour faire un appel ajax de l'api restcountries en récupérant les informations du pays :
+        // https://restcountries.com/v3.1/name/{name}
+
+        // Ensuite il faut afficher dans le div id="infos_pays" les informations suivantes :
+        // - le nom commun dans un h1
+        // - le nom officiel en dessous
+        // - le nombre d'habitant et l'appélation des habitants
+        // - la capitale
+        // - une iframe de google map qui affiche la capitale
+        // https://maps.google.com/maps?q={latitude},{longitude}&hl=fr&z=14&amp;output=embed
+        // - le drapeau dans un img src
+
+        $('form').on('submit', function (e) {
+            e.preventDefault();
+
+            let val = $('#pays').val();
+
+            $.ajax({
+                type: 'GET',
+                url: 'https://restcountries.com/v3.1/name/' + val + '?fullText=true',
+                dataType: 'json',
+                success: function(infos) {
+                    console.log(infos);
+
+                    let contenu = '<h1 class="pb-4 border-bottom">' + infos[0].translations.fra.common + '</h1>' ;
+                    contenu += '<p>Nom officiel : ' + infos[0].translations.fra.official + '</p>';
+
+                    if(infos[0].demonyms.fra) {
+                        contenu += '<p>Nombre d\habitant : ' + infos[0].population + ' (<small>' + infos[0].demonyms.fra.m + ' | ' + infos[0].demonyms.fra.f + '</small>)</p>';
+                    } else {
+                        contenu += '<p>Nombre d\habitant : ' + infos[0].population + ' (<small>' + infos[0].demonyms.eng.m + ' | ' + infos[0].demonyms.eng.f + '</small>)</p>';
+                    }
+
+                    contenu += '<p>Capitale : ' + infos[0].capital[0] + '</p>';
+                    contenu += '<iframe src="https://maps.google.com/maps?q=' + infos[0].latlng[0] + ',' + infos[0].latlng[1] + '&hl=fr&z=14&amp;output=embed" style="width: 100%; height: 350px;"></iframe>';
+
+                    contenu += '<img src="' + infos[0].flags.svg + '" alt="drapeau du pays : ' + infos[0].translations.fra.common + '" class="img-thumbnail w-50 mx-auto">';
+
+                    $('#infos_pays').html(contenu);
+                }
+            });
+
+        });
+
+
+
+    });
+
+
+
+</script>
+</body>
+
+</html>
